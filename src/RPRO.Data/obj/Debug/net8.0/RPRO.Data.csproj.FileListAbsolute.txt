@@ -1,0 +1,5 @@
+C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.Data\obj\Debug\net8.0\RPRO.Data.csproj.AssemblyReference.cache
+C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.Data\obj\Debug\net8.0\RPRO.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.Data\obj\Debug\net8.0\RPRO.Data.AssemblyInfoInputs.cache
+C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.Data\obj\Debug\net8.0\RPRO.Data.AssemblyInfo.cs
+C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.Data\obj\Debug\net8.0\RPRO.Data.csproj.CoreCompileInputs.cache

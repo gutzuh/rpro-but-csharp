@@ -1,0 +1,238 @@
+<UserControl x:Class="RPRO.App.Views.DashboardAmendoimView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d"
+             Background="{DynamicResource MaterialDesign.Brush.Background}"
+             d:DesignHeight="1000" d:DesignWidth="1400">
+
+    <Grid>
+        <!-- Loading Overlay -->
+        <Grid Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+              Panel.ZIndex="100"
+              Background="#88FFFFFF">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                             IsIndeterminate="True"
+                             Width="50" Height="50"/>
+                <TextBlock Text="Carregando dados..." 
+                           Margin="0,16,0,0"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24">
+
+                <!-- Cabeçalho com Filtros -->
+                <materialDesign:Card Padding="16" Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Dashboard de Amendoim" 
+                                       Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
+                            <TextBlock Text="Análise de rendimento e perdas" 
+                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                       Foreground="Gray"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <DatePicker SelectedDate="{Binding DataInicio}"
+                                        materialDesign:HintAssist.Hint="Data Início"
+                                        Width="140" Margin="0,0,16,0"/>
+                            <DatePicker SelectedDate="{Binding DataFim}"
+                                        materialDesign:HintAssist.Hint="Data Fim"
+                                        Width="140" Margin="0,0,16,0"/>
+                            <Button Command="{Binding LoadDataCommand}"
+                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                    Content="Atualizar"/>
+                        </StackPanel>
+                    </Grid>
+                </materialDesign:Card>
+
+                <!-- Cards de Métricas -->
+                <UniformGrid Columns="4" Margin="0,0,0,16">
+                    <!-- Peso Entrada -->
+                    <materialDesign:Card Margin="0,0,8,0" Padding="16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="TrayArrowDown" 
+                                                         Width="28" Height="28"
+                                                         Foreground="#43A047"/>
+                                <TextBlock Text="Peso Total Entrada" 
+                                           VerticalAlignment="Center"
+                                           Margin="8,0,0,0"
+                                           Style="{StaticResource MaterialDesignBody2TextBlock}"/>
+                            </StackPanel>
+                            <TextBlock Margin="0,8,0,0">
+                                <Run Text="{Binding PesoEntrada, StringFormat={}{0:N2}}" 
+                                     FontSize="26" FontWeight="Bold"/>
+                                <Run Text=" kg" FontSize="14" Foreground="Gray"/>
+                            </TextBlock>
+                            <TextBlock Text="Matéria-prima recebida" 
+                                       Foreground="Gray" FontSize="11"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Peso Saída -->
+                    <materialDesign:Card Margin="8,0,8,0" Padding="16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="TrayArrowUp" 
+                                                         Width="28" Height="28"
+                                                         Foreground="#1E88E5"/>
+                                <TextBlock Text="Peso Total Saída" 
+                                           VerticalAlignment="Center"
+                                           Margin="8,0,0,0"
+                                           Style="{StaticResource MaterialDesignBody2TextBlock}"/>
+                            </StackPanel>
+                            <TextBlock Margin="0,8,0,0">
+                                <Run Text="{Binding PesoSaida, StringFormat={}{0:N2}}" 
+                                     FontSize="26" FontWeight="Bold"/>
+                                <Run Text=" kg" FontSize="14" Foreground="Gray"/>
+                            </TextBlock>
+                            <TextBlock Text="Produto processado" 
+                                       Foreground="Gray" FontSize="11"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Rendimento -->
+                    <materialDesign:Card Margin="8,0,8,0" Padding="16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ChartLine" 
+                                                         Width="28" Height="28"
+                                                         Foreground="#FB8C00"/>
+                                <TextBlock Text="Rendimento" 
+                                           VerticalAlignment="Center"
+                                           Margin="8,0,0,0"
+                                           Style="{StaticResource MaterialDesignBody2TextBlock}"/>
+                            </StackPanel>
+                            <TextBlock Margin="0,8,0,0">
+                                <Run Text="{Binding RendimentoPercentual, StringFormat={}{0:N1}}" 
+                                     FontSize="26" FontWeight="Bold"/>
+                                <Run Text="%" FontSize="14" Foreground="Gray"/>
+                            </TextBlock>
+                            <TextBlock Text="Taxa de aproveitamento" 
+                                       Foreground="Gray" FontSize="11"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Perda -->
+                    <materialDesign:Card Margin="8,0,0,0" Padding="16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="TrendingDown" 
+                                                         Width="28" Height="28"
+                                                         Foreground="#E53935"/>
+                                <TextBlock Text="Perda" 
+                                           VerticalAlignment="Center"
+                                           Margin="8,0,0,0"
+                                           Style="{StaticResource MaterialDesignBody2TextBlock}"/>
+                            </StackPanel>
+                            <TextBlock Margin="0,8,0,0">
+                                <Run Text="{Binding Perda, StringFormat={}{0:N2}}" 
+                                     FontSize="26" FontWeight="Bold"/>
+                                <Run Text=" kg" FontSize="14" Foreground="Gray"/>
+                            </TextBlock>
+                            <TextBlock Foreground="Gray" FontSize="11">
+                                <Run Text="{Binding PerdaPercentual, StringFormat={}{0:N1}}"/>
+                                <Run Text="% do total"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </UniformGrid>
+
+                <!-- Gráficos - Linha 1 -->
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Entrada/Saída por Horário -->
+                    <materialDesign:Card Grid.Column="0" Margin="0,0,8,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Entrada/Saída por Horário"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Margin="0,0,0,16"/>
+                            <lvc:CartesianChart Series="{Binding GraficoEntradaSaidaHorario}"
+                                                XAxes="{Binding XAxesHorario}"
+                                                Height="280"
+                                                LegendPosition="Top"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Rendimento por Dia -->
+                    <materialDesign:Card Grid.Column="1" Margin="8,0,0,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Rendimento por Dia"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Margin="0,0,0,16"/>
+                            <lvc:CartesianChart Series="{Binding GraficoRendimentoDia}"
+                                                XAxes="{Binding XAxesDia}"
+                                                Height="280"
+                                                LegendPosition="Top"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Grid>
+
+                <!-- Gráficos - Linha 2 -->
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Fluxo Semanal -->
+                    <materialDesign:Card Grid.Column="0" Margin="0,0,8,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Fluxo Semanal"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Margin="0,0,0,16"/>
+                            <lvc:CartesianChart Series="{Binding GraficoFluxoSemanal}"
+                                                XAxes="{Binding XAxesSemanal}"
+                                                Height="220"
+                                                LegendPosition="Bottom"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Eficiência por Turno -->
+                    <materialDesign:Card Grid.Column="1" Margin="8,0,8,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Eficiência por Turno"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Margin="0,0,0,16"/>
+                            <lvc:CartesianChart Series="{Binding GraficoEficienciaTurno}"
+                                                XAxes="{Binding XAxesTurno}"
+                                                Height="220"
+                                                LegendPosition="Bottom"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Perda Acumulada -->
+                    <materialDesign:Card Grid.Column="2" Margin="8,0,0,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Perda Acumulada"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Margin="0,0,0,16"/>
+                            <lvc:CartesianChart Series="{Binding GraficoPerdaAcumulada}"
+                                                XAxes="{Binding XAxesPerda}"
+                                                Height="220"
+                                                LegendPosition="Bottom"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Grid>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

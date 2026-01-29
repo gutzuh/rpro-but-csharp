@@ -1,0 +1,49 @@
+<UserControl x:Class="RPRO.App.Views.DashboardRacaoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Cards de Métricas -->
+        <UniformGrid Grid.Row="0" Columns="4" Margin="16">
+            <md:Card Margin="8" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Total Produzido" Style="{StaticResource MaterialDesignCaptionTextBlock}"/>
+                    <TextBlock Text="{Binding TotalProduzido, StringFormat={}{0:N2} kg}" 
+                               Style="{StaticResource MaterialDesignHeadline4TextBlock}"/>
+                </StackPanel>
+            </md:Card>
+            
+            <md:Card Margin="8" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Total Batidas" Style="{StaticResource MaterialDesignCaptionTextBlock}"/>
+                    <TextBlock Text="{Binding TotalBatidas}" 
+                               Style="{StaticResource MaterialDesignHeadline4TextBlock}"/>
+                </StackPanel>
+            </md:Card>
+        </UniformGrid>
+        
+        <!-- Gráficos -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Gráfico de Pizza -->
+            <md:Card Grid.Column="0" Margin="16">
+                <lvc:PieChart Series="{Binding ProducaoPorFormula}"/>
+            </md:Card>
+            
+            <!-- Gráfico de Barras -->
+            <md:Card Grid.Column="1" Margin="16">
+                <lvc:CartesianChart Series="{Binding ProducaoSemanal}"/>
+            </md:Card>
+        </Grid>
+    </Grid>
+</UserControl>

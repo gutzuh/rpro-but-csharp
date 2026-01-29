@@ -1,0 +1,31 @@
+<Window x:Class="RPRO.App.Views.MainWindow"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Cortez" Height="800" Width="1200"
+        WindowStartupLocation="CenterScreen">
+    
+    <md:DrawerHost IsLeftDrawerOpen="{Binding IsMenuOpen}">
+        <md:DrawerHost.LeftDrawerContent>
+            <!-- Sidebar -->
+            <StackPanel Width="250">
+                <Image Source="/Assets/logo.png" Height="60" Margin="16"/>
+                
+                <ListBox ItemsSource="{Binding MenuItems}" 
+                         SelectedItem="{Binding SelectedMenuItem}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="{Binding Icon}" Margin="0,0,16,0"/>
+                                <TextBlock Text="{Binding Title}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </md:DrawerHost.LeftDrawerContent>
+        
+        <!-- Conteúdo Principal -->
+        <Grid>
+            <ContentControl Content="{Binding CurrentView}"/>
+        </Grid>
+    </md:DrawerHost>
+</Window>

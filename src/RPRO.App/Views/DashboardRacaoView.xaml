@@ -1,0 +1,189 @@
+<UserControl x:Class="RPRO.App.Views.DashboardRacaoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d"
+             Background="{DynamicResource MaterialDesign.Brush.Background}"
+             d:DesignHeight="900" d:DesignWidth="1400">
+
+    <Grid>
+        <!-- Loading Overlay -->
+        <Grid Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+              Panel.ZIndex="100"
+              Background="#88FFFFFF">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                             IsIndeterminate="True"
+                             Width="50" Height="50"/>
+                <TextBlock Text="Carregando dados..." 
+                           Margin="0,16,0,0"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24">
+                
+                <!-- Cabeçalho com Filtros -->
+                <materialDesign:Card Padding="16" Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Dashboard de Ração" 
+                                       Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
+                            <TextBlock Text="{Binding Periodo}" 
+                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                       Foreground="Gray"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <DatePicker SelectedDate="{Binding DataInicio}"
+                                        materialDesign:HintAssist.Hint="Data Início"
+                                        Width="140" Margin="0,0,16,0"/>
+                            <DatePicker SelectedDate="{Binding DataFim}"
+                                        materialDesign:HintAssist.Hint="Data Fim"
+                                        Width="140" Margin="0,0,16,0"/>
+                            <Button Command="{Binding LoadDataCommand}"
+                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                    Content="Atualizar"/>
+                        </StackPanel>
+                    </Grid>
+                </materialDesign:Card>
+
+                <!-- Cards de Métricas -->
+                <UniformGrid Columns="3" Margin="0,0,0,16">
+                    <!-- Total Produzido -->
+                    <materialDesign:Card Margin="0,0,8,0" Padding="20">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Scale" 
+                                                         Width="32" Height="32"
+                                                         Foreground="#E53935"/>
+                                <TextBlock Text="Total Produzido" 
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,0,0"
+                                           Style="{StaticResource MaterialDesignSubtitle1TextBlock}"/>
+                            </StackPanel>
+                            <TextBlock Margin="0,12,0,0">
+                                <Run Text="{Binding TotalKg, StringFormat={}{0:N2}}" 
+                                     FontSize="32" FontWeight="Bold"/>
+                                <Run Text=" kg" FontSize="16" Foreground="Gray"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Total Batidas -->
+                    <materialDesign:Card Margin="8,0,8,0" Padding="20">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Counter" 
+                                                         Width="32" Height="32"
+                                                         Foreground="#1E88E5"/>
+                                <TextBlock Text="Total Batidas" 
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,0,0"
+                                           Style="{StaticResource MaterialDesignSubtitle1TextBlock}"/>
+                            </StackPanel>
+                            <TextBlock Margin="0,12,0,0">
+                                <Run Text="{Binding TotalBatidas, StringFormat={}{0:N0}}" 
+                                     FontSize="32" FontWeight="Bold"/>
+                                <Run Text=" registros" FontSize="16" Foreground="Gray"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Fórmulas Únicas -->
+                    <materialDesign:Card Margin="8,0,0,0" Padding="20">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Flask" 
+                                                         Width="32" Height="32"
+                                                         Foreground="#43A047"/>
+                                <TextBlock Text="Fórmulas Únicas" 
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,0,0"
+                                           Style="{StaticResource MaterialDesignSubtitle1TextBlock}"/>
+                            </StackPanel>
+                            <TextBlock Margin="0,12,0,0">
+                                <Run Text="{Binding FormulasUnicas}" 
+                                     FontSize="32" FontWeight="Bold"/>
+                                <Run Text=" fórmulas" FontSize="16" Foreground="Gray"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </UniformGrid>
+
+                <!-- Gráficos - Linha 1 -->
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Gráfico Pizza - Produção por Fórmula -->
+                    <materialDesign:Card Grid.Column="0" Margin="0,0,8,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Produção por Fórmula (Top 10)"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Margin="0,0,0,16"/>
+                            <lvc:PieChart Series="{Binding GraficoPorFormula}"
+                                          Height="300"
+                                          LegendPosition="Right"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Gráfico Barras - Produção por Dia -->
+                    <materialDesign:Card Grid.Column="1" Margin="8,0,0,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Produção por Dia (Últimos 7 dias)"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Margin="0,0,0,16"/>
+                            <lvc:CartesianChart Series="{Binding GraficoPorDia}"
+                                                XAxes="{Binding XAxesDia}"
+                                                Height="300"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Grid>
+
+                <!-- Gráficos - Linha 2 -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Gráfico Semanal -->
+                    <materialDesign:Card Grid.Column="0" Margin="0,0,8,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Produção Semanal"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Margin="0,0,0,16"/>
+                            <lvc:CartesianChart Series="{Binding GraficoSemanal}"
+                                                XAxes="{Binding XAxesSemanal}"
+                                                Height="250"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Gráfico Barras Horizontal - Top Produtos -->
+                    <materialDesign:Card Grid.Column="1" Margin="8,0,0,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Consumo por Produto (Top 10)"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Margin="0,0,0,16"/>
+                            <lvc:CartesianChart Series="{Binding GraficoPorProduto}"
+                                                Height="250"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Grid>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

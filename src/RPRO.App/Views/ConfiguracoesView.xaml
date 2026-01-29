@@ -1,0 +1,277 @@
+<UserControl x:Class="RPRO.App.Views.ConfiguracoesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Background="{DynamicResource MaterialDesign.Brush.Background}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24">
+
+            <!-- Cabeçalho -->
+            <TextBlock Text="Configurações" 
+                       Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                       Margin="0,0,0,24"/>
+
+            <!-- Mensagem -->
+            <materialDesign:Card Margin="0,0,0,16"
+                                 Padding="16"
+                                 Visibility="{Binding Mensagem, Converter={StaticResource StringToVisibilityConverter}}">
+                <materialDesign:Card.Style>
+                    <Style TargetType="materialDesign:Card">
+                        <Setter Property="Background" Value="#E8F5E9"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding MensagemSucesso}" Value="False">
+                                <Setter Property="Background" Value="#FFEBEE"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </materialDesign:Card.Style>
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon VerticalAlignment="Center" Width="24" Height="24">
+                        <materialDesign:PackIcon.Style>
+                            <Style TargetType="materialDesign:PackIcon">
+                                <Setter Property="Kind" Value="CheckCircle"/>
+                                <Setter Property="Foreground" Value="#43A047"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding MensagemSucesso}" Value="False">
+                                        <Setter Property="Kind" Value="AlertCircle"/>
+                                        <Setter Property="Foreground" Value="#E53935"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </materialDesign:PackIcon.Style>
+                    </materialDesign:PackIcon>
+                    <TextBlock Text="{Binding Mensagem}" 
+                               Margin="8,0,0,0"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Banco de Dados -->
+            <materialDesign:Card Padding="16" Margin="0,0,0,16">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <materialDesign:PackIcon Kind="Database" Width="24" Height="24" VerticalAlignment="Center"/>
+                        <TextBlock Text="Banco de Dados" 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Margin="8,0,0,0"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding DbServer}"
+                                 materialDesign:HintAssist.Hint="Servidor"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Margin="0,0,8,0"/>
+
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding DbPort}"
+                                 materialDesign:HintAssist.Hint="Porta"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Width="80"
+                                 Margin="8,0,8,0"/>
+
+                        <TextBox Grid.Column="2"
+                                 Text="{Binding DbUser}"
+                                 materialDesign:HintAssist.Hint="Usuário"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Margin="8,0,8,0"/>
+
+                        <TextBox Grid.Column="3"
+                                 Text="{Binding DbName}"
+                                 materialDesign:HintAssist.Hint="Database"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Margin="8,0,0,0"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                        <Button Command="{Binding TestarConexaoCommand}"
+                                Style="{StaticResource MaterialDesignOutlinedButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Connection" VerticalAlignment="Center"/>
+                                <TextBlock Text="Testar Conexão" Margin="8,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+
+                        <TextBlock Text="{Binding DbStatus}" 
+                                   VerticalAlignment="Center"
+                                   Margin="16,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Matérias-Primas -->
+            <materialDesign:Card Padding="16" Margin="0,0,0,16">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <materialDesign:PackIcon Kind="Package" Width="24" Height="24" VerticalAlignment="Center"/>
+                        <TextBlock Text="Matérias-Primas" 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Margin="8,0,0,0"
+                                   VerticalAlignment="Center"/>
+                        <Button Command="{Binding SalvarTodasMateriasCommand}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Margin="16,0,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ContentSave" VerticalAlignment="Center"/>
+                                <TextBlock Text="Salvar Todos" Margin="8,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <DataGrid ItemsSource="{Binding MateriasPrimas}"
+                              SelectedItem="{Binding MateriaPrimaSelecionada}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              MaxHeight="400">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#" Binding="{Binding Num}" Width="50" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Produto" Binding="{Binding Produto}" Width="200"/>
+                            <DataGridComboBoxColumn Header="Medida" 
+                                                    SelectedValueBinding="{Binding Medida}"
+                                                    SelectedValuePath="Tag"
+                                                    Width="100">
+                                <DataGridComboBoxColumn.ItemsSource>
+                                    <x:Array Type="ComboBoxItem">
+                                        <ComboBoxItem Content="Gramas" Tag="0"/>
+                                        <ComboBoxItem Content="Kg" Tag="1"/>
+                                    </x:Array>
+                                </DataGridComboBoxColumn.ItemsSource>
+                            </DataGridComboBoxColumn>
+                            <DataGridCheckBoxColumn Header="Ativo" Binding="{Binding Ativo}" Width="70"/>
+                            <DataGridCheckBoxColumn Header="Ignorar" Binding="{Binding IgnorarCalculos}" Width="70"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Usuários -->
+            <materialDesign:Card Padding="16" Margin="0,0,0,16">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <materialDesign:PackIcon Kind="AccountGroup" Width="24" Height="24" VerticalAlignment="Center"/>
+                        <TextBlock Text="Usuários" 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Margin="8,0,0,0"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="300"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Lista de Usuários -->
+                        <DataGrid Grid.Column="0"
+                                  ItemsSource="{Binding Usuarios}"
+                                  SelectedItem="{Binding UsuarioSelecionado}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  Margin="0,0,16,0"
+                                  MaxHeight="250">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="120"/>
+                                <DataGridTextColumn Header="Nome" Binding="{Binding DisplayName}" Width="150"/>
+                                <DataGridTextColumn Header="Tipo" Binding="{Binding UserType}" Width="80"/>
+                                <DataGridCheckBoxColumn Header="Admin" Binding="{Binding IsAdmin}" Width="60"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Novo Usuário -->
+                        <Border Grid.Column="1" 
+                                BorderBrush="LightGray" 
+                                BorderThickness="1" 
+                                CornerRadius="4" 
+                                Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="Novo Usuário" FontWeight="Medium" Margin="0,0,0,16"/>
+
+                                <TextBox Text="{Binding NovoUsername}"
+                                         materialDesign:HintAssist.Hint="Username *"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Margin="0,0,0,8"/>
+
+                                <PasswordBox materialDesign:HintAssist.Hint="Senha *"
+                                             Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                                             Margin="0,0,0,8"/>
+
+                                <TextBox Text="{Binding NovoDisplayName}"
+                                         materialDesign:HintAssist.Hint="Nome de Exibição"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Margin="0,0,0,8"/>
+
+                                <ComboBox SelectedValue="{Binding NovoUserType}"
+                                          SelectedValuePath="Tag"
+                                          materialDesign:HintAssist.Hint="Tipo"
+                                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                          Margin="0,0,0,8">
+                                    <ComboBoxItem Content="Ração" Tag="racao"/>
+                                    <ComboBoxItem Content="Amendoim" Tag="amendoim"/>
+                                </ComboBox>
+
+                                <CheckBox Content="Administrador"
+                                          IsChecked="{Binding NovoIsAdmin}"
+                                          Margin="0,0,0,16"/>
+
+                                <Button Command="{Binding CriarUsuarioCommand}"
+                                        Style="{StaticResource MaterialDesignRaisedButton}"
+                                        HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="AccountPlus" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Criar Usuário" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Button Command="{Binding ExcluirUsuarioCommand}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Foreground="#E53935"
+                            BorderBrush="#E53935"
+                            Margin="0,16,0,0"
+                            HorizontalAlignment="Left"
+                            IsEnabled="{Binding UsuarioSelecionado, Converter={StaticResource NullToBoolConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="AccountRemove" VerticalAlignment="Center"/>
+                            <TextBlock Text="Excluir Usuário Selecionado" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Sobre -->
+            <materialDesign:Card Padding="16">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <materialDesign:PackIcon Kind="Information" Width="24" Height="24" VerticalAlignment="Center"/>
+                        <TextBlock Text="Sobre" 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Margin="8,0,0,0"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/logo.png" Height="60" Margin="0,0,16,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Cortez - Sistema de Produção" FontWeight="Bold" FontSize="16"/>
+                            <TextBlock Text="Versão 2.0.0 (C# WPF)" Foreground="Gray"/>
+                            <TextBlock Text="© 2024 J.Cortica" Foreground="Gray" FontSize="11"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

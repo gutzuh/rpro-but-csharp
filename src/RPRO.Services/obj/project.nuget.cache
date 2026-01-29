@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "2tAyE/dIjl0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\cmp00\\OneDrive\\Área de Trabalho\\NABRA\\Coisas Miguel\\testecortezc#2v\\src\\RPRO.Services\\RPRO.Services.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\cmp00\\.nuget\\packages\\dapper\\2.1.66\\dapper.2.1.66.nupkg.sha512",
+    "C:\\Users\\cmp00\\.nuget\\packages\\fluentftp\\53.0.2\\fluentftp.53.0.2.nupkg.sha512",
+    "C:\\Users\\cmp00\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.2\\microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",
+    "C:\\Users\\cmp00\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.2\\microsoft.extensions.logging.abstractions.8.0.2.nupkg.sha512",
+    "C:\\Users\\cmp00\\.nuget\\packages\\mysqlconnector\\2.5.0\\mysqlconnector.2.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

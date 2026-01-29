@@ -1,0 +1,316 @@
+<UserControl x:Class="RPRO.App.Views.CollectorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Background="{DynamicResource MaterialDesign.Brush.Background}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24">
+
+            <!-- Cabeçalho -->
+            <materialDesign:Card Padding="16" Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="Coletor de Dados" 
+                                   Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
+                        <TextBlock Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="Gray">
+                            <Run Text="Status: "/>
+                            <Run Text="{Binding StatusText}" FontWeight="Bold"/>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Command="{Binding StartCollectorCommand}"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Background="#43A047"
+                                Margin="0,0,8,0"
+                                IsEnabled="{Binding IsRunning, Converter={StaticResource InvertBoolConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Play" VerticalAlignment="Center"/>
+                                <TextBlock Text="Iniciar" Margin="8,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Command="{Binding StopCollectorCommand}"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Background="#E53935"
+                                Margin="0,0,8,0"
+                                IsEnabled="{Binding IsRunning}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Stop" VerticalAlignment="Center"/>
+                                <TextBlock Text="Parar" Margin="8,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Command="{Binding RunManualCollectionCommand}"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                IsEnabled="{Binding IsRunning, Converter={StaticResource InvertBoolConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Refresh" VerticalAlignment="Center"/>
+                                <TextBlock Text="Coletar Agora" Margin="8,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </materialDesign:Card>
+
+            <!-- Status Cards -->
+            <UniformGrid Columns="4" Margin="0,0,0,16">
+                <materialDesign:Card Margin="0,0,8,0" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Arquivos Processados" Foreground="Gray" FontSize="12"/>
+                        <TextBlock Text="{Binding FilesProcessed}" FontSize="24" FontWeight="Bold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="8,0,8,0" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Linhas Salvas" Foreground="Gray" FontSize="12"/>
+                        <TextBlock Text="{Binding TotalRowsSaved}" FontSize="24" FontWeight="Bold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="8,0,8,0" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Última Execução" Foreground="Gray" FontSize="12"/>
+                        <TextBlock Text="{Binding LastRun, StringFormat={}{0:HH:mm:ss}}" FontSize="24" FontWeight="Bold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="8,0,0,0" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Próxima Execução" Foreground="Gray" FontSize="12"/>
+                        <TextBlock Text="{Binding NextRun, StringFormat={}{0:HH:mm:ss}}" FontSize="24" FontWeight="Bold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+            </UniformGrid>
+
+            <!-- Tabs de Configuração -->
+            <materialDesign:Card Padding="16" Margin="0,0,0,16">
+                <TabControl>
+                    <!-- Tab Ração -->
+                    <TabItem Header="Coletor Ração">
+                        <StackPanel Margin="16">
+                            <RadioButton Content="Usar este coletor" 
+                                         IsChecked="{Binding TipoColetorAtivo, Converter={StaticResource EqualityConverter}, ConverterParameter=racao}"
+                                         Margin="0,0,0,16"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBox Grid.Row="0" Grid.Column="0"
+                                         Text="{Binding RacaoIhmIp}"
+                                         materialDesign:HintAssist.Hint="IP do IHM"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Margin="0,0,8,16"/>
+
+                                <TextBox Grid.Row="0" Grid.Column="1"
+                                         Text="{Binding RacaoIhmPath}"
+                                         materialDesign:HintAssist.Hint="Caminho Remoto"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Margin="8,0,0,16"/>
+
+                                <TextBox Grid.Row="1" Grid.Column="0"
+                                         Text="{Binding RacaoIhmUser}"
+                                         materialDesign:HintAssist.Hint="Usuário FTP"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Margin="0,0,8,16"/>
+
+                                <PasswordBox Grid.Row="1" Grid.Column="1"
+                                             materialDesign:HintAssist.Hint="Senha FTP"
+                                             Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                                             Margin="8,0,0,16"/>
+
+                                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+                                    <TextBox Text="{Binding RacaoIntervalo}"
+                                             materialDesign:HintAssist.Hint="Intervalo (seg)"
+                                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                             Width="150"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </TabItem>
+
+                    <!-- Tab Amendoim -->
+                    <TabItem Header="Coletor Amendoim">
+                        <StackPanel Margin="16">
+                            <RadioButton Content="Usar este coletor" 
+                                         IsChecked="{Binding TipoColetorAtivo, Converter={StaticResource EqualityConverter}, ConverterParameter=amendoim}"
+                                         Margin="0,0,0,16"/>
+
+                            <TextBlock Text="IHM 1 (Entrada - Balanças 1,2)" FontWeight="Medium" Margin="0,0,0,8"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox Grid.Column="0"
+                                         Text="{Binding AmendoimIhm1Ip}"
+                                         materialDesign:HintAssist.Hint="IP"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Margin="0,0,8,16"/>
+
+                                <TextBox Grid.Column="1"
+                                         Text="{Binding AmendoimIhm1User}"
+                                         materialDesign:HintAssist.Hint="Usuário"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Margin="8,0,8,16"/>
+
+                                <PasswordBox Grid.Column="2"
+                                             materialDesign:HintAssist.Hint="Senha"
+                                             Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                                             Margin="8,0,0,16"/>
+                            </Grid>
+
+                            <CheckBox Content="Usar duas IHMs (entrada e saída separadas)"
+                                      IsChecked="{Binding AmendoimDuasIhms}"
+                                      Margin="0,0,0,16"/>
+
+                            <StackPanel Visibility="{Binding AmendoimDuasIhms, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="IHM 2 (Saída - Balança 3)" FontWeight="Medium" Margin="0,0,0,8"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox Grid.Column="0"
+                                             Text="{Binding AmendoimIhm2Ip}"
+                                             materialDesign:HintAssist.Hint="IP"
+                                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                             Margin="0,0,8,16"/>
+
+                                    <TextBox Grid.Column="1"
+                                             Text="{Binding AmendoimIhm2User}"
+                                             materialDesign:HintAssist.Hint="Usuário"
+                                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                             Margin="8,0,8,16"/>
+
+                                    <PasswordBox Grid.Column="2"
+                                                 materialDesign:HintAssist.Hint="Senha"
+                                                 Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                                                 Margin="8,0,0,16"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <TextBox Text="{Binding AmendoimIntervalo}"
+                                     materialDesign:HintAssist.Hint="Intervalo (seg)"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     Width="150"
+                                     HorizontalAlignment="Left"/>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
+            </materialDesign:Card>
+
+            <!-- Teste de Conexão -->
+            <materialDesign:Card Padding="16" Margin="0,0,0,16">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding TestConnectionCommand}"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                IsEnabled="{Binding IsTesting, Converter={StaticResource InvertBoolConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Connection" VerticalAlignment="Center"/>
+                                <TextBlock Text="Testar Conexão" Margin="8,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+
+                        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                     IsIndeterminate="True"
+                                     Width="24" Height="24"
+                                     Margin="16,0,0,0"
+                                     Visibility="{Binding IsTesting, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding TestResult}" 
+                               Margin="0,8,0,0"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Resultados Recentes -->
+            <materialDesign:Card Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Processamentos Recentes" 
+                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                               Margin="0,0,0,16"/>
+
+                    <DataGrid ItemsSource="{Binding RecentResults}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              MaxHeight="300">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Arquivo" Binding="{Binding FileName}" Width="200"/>
+                            <DataGridTextColumn Header="Linhas" Binding="{Binding RowsProcessed}" Width="80"/>
+                            <DataGridTextColumn Header="Salvas" Binding="{Binding RowsSaved}" Width="80"/>
+                            <DataGridTextColumn Header="Duplicadas" Binding="{Binding RowsDuplicated}" Width="90"/>
+                            <DataGridTextColumn Header="Duração" Binding="{Binding Duration, StringFormat={}{0:ss\\.fff}s}" Width="80"/>
+                            <DataGridTemplateColumn Header="Status" Width="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <materialDesign:PackIcon>
+                                            <materialDesign:PackIcon.Style>
+                                                <Style TargetType="materialDesign:PackIcon">
+                                                    <Setter Property="Kind" Value="Check"/>
+                                                    <Setter Property="Foreground" Value="#43A047"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Success}" Value="False">
+                                                            <Setter Property="Kind" Value="AlertCircle"/>
+                                                            <Setter Property="Foreground" Value="#E53935"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </materialDesign:PackIcon.Style>
+                                        </materialDesign:PackIcon>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <TextBlock Text="Nenhum arquivo processado ainda"
+                               Foreground="Gray"
+                               HorizontalAlignment="Center"
+                               Margin="0,16,0,0"
+                               Visibility="{Binding RecentResults.Count, Converter={StaticResource ZeroToVisibilityConverter}}"/>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Erro -->
+            <materialDesign:Card Padding="16" 
+                                 Margin="0,16,0,0"
+                                 Background="#FFEBEE"
+                                 Visibility="{Binding LastError, Converter={StaticResource NullToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="AlertCircle" Foreground="#E53935" 
+                                             Width="24" Height="24" 
+                                             VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding LastError}" 
+                               Foreground="#C62828"
+                               Margin="8,0,0,0"
+                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </materialDesign:Card>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
