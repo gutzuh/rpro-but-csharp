@@ -13,13 +13,14 @@ public class MateriaPrimaRepository : IMateriaPrimaRepository
         _db = db;
     }
 
-    public async Task<IEnumerable<MateriaPrima>> GetAllAsync()
+    public async Task<List<MateriaPrima>> GetAllAsync()
     {
         // Garantir que existam produtos padrão
         await EnsureDefaultProductsAsync();
 
-        return await _db.QueryAsync<MateriaPrima>(
+        var result = await _db.QueryAsync<MateriaPrima>(
             "SELECT * FROM materia_prima ORDER BY num");
+        return result.ToList();
     }
 
     public async Task<MateriaPrima?> GetByNumAsync(int num)
@@ -29,14 +30,14 @@ public class MateriaPrimaRepository : IMateriaPrimaRepository
             new { Num = num });
     }
 
-    public async Task<int> SaveAsync(MateriaPrima materiaPrima)
+    public async Task SaveAsync(MateriaPrima materiaPrima)
     {
         var existing = await GetByNumAsync(materiaPrima.Num);
 
         if (existing != null)
         {
             // Update
-            return await _db.ExecuteAsync(@"
+            await _db.ExecuteAsync(@"
                 UPDATE materia_prima 
                 SET produto = @Produto, medida = @Medida, ativo = @Ativo, ignorarCalculos = @IgnorarCalculos
                 WHERE num = @Num",
@@ -45,32 +46,28 @@ public class MateriaPrimaRepository : IMateriaPrimaRepository
         else
         {
             // Insert
-            if (materiaPrima.Id == Guid.Empty)
-                materiaPrima.Id = Guid.NewGuid();
-
-            return await _db.ExecuteAsync(@"
-                INSERT INTO materia_prima (id, num, produto, medida, ativo, ignorarCalculos)
-                VALUES (@Id, @Num, @Produto, @Medida, @Ativo, @IgnorarCalculos)",
+            await _db.ExecuteAsync(@"
+                INSERT INTO materia_prima (num, produto, medida, ativo, ignorarCalculos, createdAt, updatedAt)
+                VALUES (@Num, @Produto, @Medida, @Ativo, @IgnorarCalculos, @CreatedAt, @UpdatedAt)",
                 new
                 {
-                    Id = materiaPrima.Id.ToString(),
                     materiaPrima.Num,
                     materiaPrima.Produto,
                     materiaPrima.Medida,
                     materiaPrima.Ativo,
-                    materiaPrima.IgnorarCalculos
+                    materiaPrima.IgnorarCalculos,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 });
         }
     }
 
-    public async Task<int> SaveManyAsync(IEnumerable<MateriaPrima> materiasPrimas)
+    public async Task SaveManyAsync(IEnumerable<MateriaPrima> materiasPrimas)
     {
-        var count = 0;
         foreach (var mp in materiasPrimas)
         {
-            count += await SaveAsync(mp);
+            await SaveAsync(mp);
         }
-        return count;
     }
 
     private async Task EnsureDefaultProductsAsync()
@@ -80,4 +77,15 @@ public class MateriaPrimaRepository : IMateriaPrimaRepository
         var existingCount = await _db.ExecuteScalarAsync<int>(
             "SELECT COUNT(*) FROM materia_prima");
 
-        if (existingCount >= DEFAULT_
+        if (existingCount >= DEFAULT_COUNT)
+            return;
+
+        var defaultProducts = GenerateDefaultProducts();
+        await SaveManyAsync(defaultProducts);
+    }
+
+    private IEnumerable<MateriaPrima> GenerateDefaultProducts()
+    {
+        return new List<MateriaPrima>();
+    }
+}

@@ -29,19 +29,12 @@ public partial class LoginViewModel : ObservableObject
     public LoginViewModel(AuthService authService)
     {
         _authService = authService;
-        
-        // Carregar usuário salvo
         LoadSavedUser();
     }
 
     private void LoadSavedUser()
     {
-        var savedUser = Properties.Settings.Default.SavedUsername;
-        if (!string.IsNullOrEmpty(savedUser))
-        {
-            Username = savedUser;
-            LembrarUsuario = true;
-        }
+        // Sem salvamento de usuário por enquanto
     }
 
     [RelayCommand]
@@ -58,27 +51,15 @@ public partial class LoginViewModel : ObservableObject
             IsLoading = true;
             ErrorMessage = "";
 
-            var user = await _authService.LoginAsync(Username, Password);
+            var (success, message, user) = await _authService.AuthenticateAsync(Username, Password);
 
-            if (user != null)
+            if (success && user != null)
             {
-                // Salvar usuário se marcado
-                if (LembrarUsuario)
-                {
-                    Properties.Settings.Default.SavedUsername = Username;
-                    Properties.Settings.Default.Save();
-                }
-                else
-                {
-                    Properties.Settings.Default.SavedUsername = "";
-                    Properties.Settings.Default.Save();
-                }
-
                 LoginSuccess?.Invoke(this, user);
             }
             else
             {
-                ErrorMessage = "Usuário ou senha incorretos";
+                ErrorMessage = message;
                 Password = "";
             }
         }

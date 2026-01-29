@@ -16,9 +16,6 @@
     <FileVersion>2.0.0.0</FileVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     
-    <!-- Ícone do App -->
-    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
-    
     <!-- Publicação -->
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
@@ -45,12 +42,10 @@
   </ItemGroup>
 
   <!-- Assets -->
-  <ItemGroup>
-    <Resource Include="Assets\logo.png" />
-    <Resource Include="Assets\logoCmono.png" />
-    <Resource Include="Assets\icon.ico" />
+  <!-- ItemGroup -->
+  <!-- <ItemGroup>
     <Resource Include="Assets\default-avatar.png" />
-  </ItemGroup>
+  </ItemGroup> -->
 
   <!-- Settings -->
   <ItemGroup>

@@ -25,7 +25,24 @@ public partial class MainWindow : Window
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        ShowLogin();
+        // TODO: Descomentar para ativar login
+        // ShowLogin();
+        
+        // Teste temporário - carregar direto sem login
+        var testUser = new User
+        {
+            Id = 1,
+            Username = "admin",
+            DisplayName = "Administrador",
+            Email = "admin@cortez.com",
+            IsAdmin = true,
+            UserType = "admin",
+            Ativo = true
+        };
+        
+        _currentUser = testUser;
+        _viewModel.SetUser(testUser);
+        Visibility = Visibility.Visible;
     }
 
     private void ShowLogin()

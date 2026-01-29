@@ -94,10 +94,7 @@ public partial class DashboardRacaoViewModel : ObservableObject
             TotalBatidas = dados.TotalBatidas;
             FormulasUnicas = dados.FormulasUnicas;
 
-            if (dados.PrimeiraData.HasValue && dados.UltimaData.HasValue)
-            {
-                Periodo = $"{dados.PrimeiraData:dd/MM/yyyy} - {dados.UltimaData:dd/MM/yyyy}";
-            }
+            Periodo = $"{dados.PrimeiraData:dd/MM/yyyy} - {dados.UltimaData:dd/MM/yyyy}";
 
             // Gráfico de Pizza - Por Fórmula
             GraficoPorFormula = dados.PorFormula

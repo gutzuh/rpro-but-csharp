@@ -76,19 +76,38 @@ public partial class MainViewModel : ObservableObject
 
     public void NavigateTo(Type viewModelType)
     {
-        var viewModel = _services.GetService(viewModelType);
-        CurrentView = viewModel;
+        try
+        {
+            var viewModel = _services.GetService(viewModelType);
+            if (viewModel != null)
+            {
+                CurrentView = viewModel;
+                System.Diagnostics.Debug.WriteLine($"Navegou para: {viewModelType.Name}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"ERRO: ViewModel {viewModelType.Name} é null!");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"ERRO na navegação: {ex.Message}");
+        }
     }
 
     public void SetUser(User user)
     {
         CurrentUser = user;
+        System.Diagnostics.Debug.WriteLine($"User definido: {user.DisplayName}");
+        
         LoadMenuItems();
+        System.Diagnostics.Debug.WriteLine($"MenuItems carregados: {MenuItems.Count}");
         
         // Navegar para primeiro item
         if (MenuItems.Count > 0)
         {
             SelectedMenuItem = MenuItems[0];
+            System.Diagnostics.Debug.WriteLine($"Primeiro menu item selecionado: {MenuItems[0].Title}");
         }
     }
 }

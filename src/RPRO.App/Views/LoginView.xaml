@@ -30,7 +30,6 @@
                     CornerRadius="16,16,0,0"
                     Padding="32">
                 <StackPanel HorizontalAlignment="Center">
-                    <Image Source="/Assets/logo.png" Height="80" Margin="0,0,0,16"/>
                     <TextBlock Text="Cortez" 
                                FontSize="28" 
                                FontWeight="Bold" 
@@ -56,6 +55,12 @@
 
             <!-- Formulário -->
             <StackPanel Grid.Row="1" Margin="32" VerticalAlignment="Center">
+                
+                <!-- Debug Info -->
+                <TextBlock Text="{Binding Username, StringFormat='User: {0}'}"
+                           Foreground="Gray"
+                           FontSize="10"
+                           Margin="0,0,0,8"/>
                 
                 <!-- Erro -->
                 <Border Background="#FFEBEE" 

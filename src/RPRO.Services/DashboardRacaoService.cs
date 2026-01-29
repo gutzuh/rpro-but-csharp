@@ -1,5 +1,6 @@
 using RPRO.Core.DTOs;
 using RPRO.Core.Interfaces;
+using static RPRO.Core.DTOs.DashboardRacaoDto;
 
 namespace RPRO.Services;
 

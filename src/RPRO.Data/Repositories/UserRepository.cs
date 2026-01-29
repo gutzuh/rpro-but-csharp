@@ -26,21 +26,23 @@ public class UserRepository : IUserRepository
             new { Username = username, Password = password });
     }
 
-    public async Task<IEnumerable<User>> GetAllAsync()
+    public async Task<List<User>> GetAllAsync()
     {
-        return await _db.QueryAsync<User>("SELECT * FROM user ORDER BY username");
+        var result = await _db.QueryAsync<User>("SELECT * FROM user ORDER BY username");
+        return result.ToList();
     }
 
-    public async Task<int> CreateAsync(User user)
+    public async Task<User> CreateAsync(User user)
     {
         var sql = @"
             INSERT INTO user (username, password, isAdmin, displayName, photoPath, userType)
             VALUES (@Username, @Password, @IsAdmin, @DisplayName, @PhotoPath, @UserType)";
 
-        return await _db.ExecuteAsync(sql, user);
+        await _db.ExecuteAsync(sql, user);
+        return user;
     }
 
-    public async Task<int> UpdateAsync(User user)
+    public async Task<User> UpdateAsync(User user)
     {
         var sql = @"
             UPDATE user SET 
@@ -51,11 +53,13 @@ public class UserRepository : IUserRepository
                 userType = @UserType
             WHERE id = @Id";
 
-        return await _db.ExecuteAsync(sql, user);
+        await _db.ExecuteAsync(sql, user);
+        return user;
     }
 
-    public async Task<int> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return await _db.ExecuteAsync("DELETE FROM user WHERE id = @Id", new { Id = id });
+        var result = await _db.ExecuteAsync("DELETE FROM user WHERE id = @Id", new { Id = id });
+        return result > 0;
     }
 }

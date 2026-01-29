@@ -27,6 +27,9 @@
         <DataTemplate DataType="{x:Type vm:ConfiguracoesViewModel}">
             <views:ConfiguracoesView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CollectorViewModel}">
+            <views:CollectorView />
+        </DataTemplate>
     </Window.Resources>
 
     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsMenuOpen}">
@@ -37,7 +40,7 @@
                 
                 <!-- Logo e Título -->
                 <StackPanel DockPanel.Dock="Top" Margin="16">
-                    <Image Source="/Assets/logo.png" Height="60" Margin="0,0,0,8"/>
+                    <!-- <Image Source="/Assets/logo.png" Height="60" Margin="0,0,0,8"/> -->
                     <TextBlock Text="Cortez" 
                                FontSize="24" FontWeight="Bold" 
                                Foreground="White" 
@@ -89,13 +92,9 @@
                         Padding="16"
                         Visibility="{Binding CurrentUser, Converter={StaticResource NullToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
-                        <Ellipse Width="40" Height="40">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="/Assets/default-avatar.png"/>
-                            </Ellipse.Fill>
-                        </Ellipse>
+                        <Ellipse Width="40" Height="40" Fill="LightGray"/>
                         <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding CurrentUser.Nome}" 
+                            <TextBlock Text="{Binding CurrentUser.DisplayName}" 
                                        Foreground="White" 
                                        FontWeight="Medium"/>
                             <TextBlock Text="{Binding CurrentUser.UserType}" 
@@ -145,9 +144,26 @@
             </materialDesign:ColorZone>
 
             <!-- Área de Conteúdo -->
-            <ContentControl Grid.Row="1" 
-                            Content="{Binding CurrentView}"
-                            Margin="0"/>
+            <Grid Grid.Row="1">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentUser.DisplayName, StringFormat='Usuário: {0}'}"
+                               FontSize="24"
+                               Foreground="Black"
+                               Margin="0,0,0,20"/>
+                    <TextBlock Text="{Binding SelectedMenuItem.Title, StringFormat='Menu: {0}'}"
+                               FontSize="20"
+                               Foreground="Blue"
+                               Margin="0,0,0,20"/>
+                    <TextBlock Text="{Binding CurrentView, StringFormat='View Type: {0}'}"
+                               FontSize="16"
+                               Foreground="Red"
+                               Margin="0,0,0,20"/>
+                    <ContentControl Content="{Binding CurrentView}"
+                                    Background="LightGray"
+                                    Height="400"
+                                    Width="800"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </materialDesign:DrawerHost>
 </Window>
