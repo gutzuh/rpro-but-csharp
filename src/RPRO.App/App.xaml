@@ -10,6 +10,9 @@
                 <!-- Material Design -->
                 <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Red" SecondaryColor="Amber" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />
+                
+                <!-- View Templates -->
+                <ResourceDictionary Source="Resources/ViewTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converters -->

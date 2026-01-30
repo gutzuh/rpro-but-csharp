@@ -4,33 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:vm="clr-namespace:RPRO.App.ViewModels"
-        xmlns:views="clr-namespace:RPRO.App.Views"
         mc:Ignorable="d"
         Title="Cortez - Sistema de Produção" 
         Height="800" Width="1280"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         Style="{StaticResource MaterialDesignWindow}">
-
-    <Window.Resources>
-        <!-- DataTemplates para navegação automática -->
-        <DataTemplate DataType="{x:Type vm:DashboardRacaoViewModel}">
-            <views:DashboardRacaoView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:DashboardAmendoimViewModel}">
-            <views:DashboardAmendoimView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:RelatorioViewModel}">
-            <views:RelatorioView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:ConfiguracoesViewModel}">
-            <views:ConfiguracoesView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:CollectorViewModel}">
-            <views:CollectorView />
-        </DataTemplate>
-    </Window.Resources>
 
     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsMenuOpen}">
         
@@ -40,7 +19,6 @@
                 
                 <!-- Logo e Título -->
                 <StackPanel DockPanel.Dock="Top" Margin="16">
-                    <!-- <Image Source="/Assets/logo.png" Height="60" Margin="0,0,0,8"/> -->
                     <TextBlock Text="Cortez" 
                                FontSize="24" FontWeight="Bold" 
                                Foreground="White" 
@@ -126,7 +104,7 @@
                         <materialDesign:PackIcon Kind="Menu" Width="24" Height="24"/>
                     </Button>
 
-                    <TextBlock Text="{Binding SelectedMenuItem.Title}" 
+                    <TextBlock Text="{Binding SelectedMenuItem.Title, FallbackValue='Selecione um menu'}" 
                                VerticalAlignment="Center"
                                Margin="16,0,0,0"
                                FontSize="18"
@@ -144,25 +122,21 @@
             </materialDesign:ColorZone>
 
             <!-- Área de Conteúdo -->
-            <Grid Grid.Row="1">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="{Binding CurrentUser.DisplayName, StringFormat='Usuário: {0}'}"
-                               FontSize="24"
-                               Foreground="Black"
-                               Margin="0,0,0,20"/>
-                    <TextBlock Text="{Binding SelectedMenuItem.Title, StringFormat='Menu: {0}'}"
-                               FontSize="20"
-                               Foreground="Blue"
-                               Margin="0,0,0,20"/>
-                    <TextBlock Text="{Binding CurrentView, StringFormat='View Type: {0}'}"
-                               FontSize="16"
-                               Foreground="Red"
-                               Margin="0,0,0,20"/>
-                    <ContentControl Content="{Binding CurrentView}"
-                                    Background="LightGray"
-                                    Height="400"
-                                    Width="800"/>
-                </StackPanel>
+            <Grid Grid.Row="1" Background="White" ShowGridLines="False">
+                <!-- View atual -->
+                <ContentControl Content="{Binding CurrentView}" 
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch"/>
+                
+                <!-- Debug overlay -->
+                <TextBlock Text="{Binding CurrentView}" 
+                           Foreground="LightGray" 
+                           FontSize="10"
+                           Margin="10"
+                           VerticalAlignment="Bottom"
+                           HorizontalAlignment="Left"/>
             </Grid>
         </Grid>
     </materialDesign:DrawerHost>

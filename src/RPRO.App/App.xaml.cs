@@ -15,7 +15,7 @@ public partial class App : Application
     public static IServiceProvider Services { get; private set; } = null!;
     private static readonly string LogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "cortez_error.log");
 
-    private static void LogError(string message)
+    public static void LogError(string message)
     {
         try
         {
@@ -60,6 +60,11 @@ public partial class App : Application
                 var migration = Services.GetRequiredService<DatabaseMigration>();
                 await migration.MigrateAsync();
                 LogError("Migrations concluídas.");
+
+                // Inserir dados de teste se o banco estiver vazio
+                LogError("Verificando dados de teste...");
+                var db = Services.GetRequiredService<DatabaseContext>();
+                await SeedTestData.SeedAsync(db);
             }
             catch (Exception dbEx)
             {
@@ -106,6 +111,7 @@ public partial class App : Application
         // ViewModels
         services.AddTransient<MainViewModel>();
         services.AddTransient<LoginViewModel>();
+        services.AddTransient<TestViewModel>();
         services.AddTransient<DashboardRacaoViewModel>();
         services.AddTransient<DashboardAmendoimViewModel>();
         services.AddTransient<RelatorioViewModel>();

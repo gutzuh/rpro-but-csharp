@@ -83,7 +83,12 @@ public partial class DashboardAmendoimViewModel : ObservableObject
     public DashboardAmendoimViewModel(DashboardAmendoimService service)
     {
         _service = service;
-        _ = LoadDataAsync();
+        // Carregar dados de forma segura (não bloqueia se falhar)
+        System.Windows.Application.Current.Dispatcher.InvokeAsync(async () => 
+        {
+            try { await LoadDataAsync(); }
+            catch (Exception ex) { ErrorMessage = $"Erro ao carregar: {ex.Message}"; }
+        });
     }
 
     [RelayCommand]

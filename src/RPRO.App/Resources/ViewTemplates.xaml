@@ -1,0 +1,33 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:RPRO.App.ViewModels"
+                    xmlns:views="clr-namespace:RPRO.App.Views">
+
+    <!-- TEST VIEW -->
+    <DataTemplate DataType="{x:Type vm:TestViewModel}">
+        <views:TestView />
+    </DataTemplate>
+
+    <!-- DataTemplates para navegação automática -->
+    <DataTemplate DataType="{x:Type vm:DashboardRacaoViewModel}">
+        <views:DashboardRacaoView />
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:DashboardAmendoimViewModel}">
+        <views:DashboardAmendoimView />
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:RelatorioViewModel}">
+        <views:RelatorioView />
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:ConfiguracoesViewModel}">
+        <views:ConfiguracoesView />
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:CollectorViewModel}">
+        <views:CollectorView />
+    </DataTemplate>
+    
+</ResourceDictionary>
+

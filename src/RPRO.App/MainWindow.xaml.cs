@@ -17,32 +17,35 @@ public partial class MainWindow : Window
         _viewModel = viewModel;
         DataContext = _viewModel;
 
-        // Esconder janela principal até login
-        Visibility = Visibility.Hidden;
+        // NÃO esconder - mostrar direto
+        // Visibility = Visibility.Hidden;
 
         Loaded += MainWindow_Loaded;
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        // TODO: Descomentar para ativar login
-        // ShowLogin();
-        
-        // Teste temporário - carregar direto sem login
-        var testUser = new User
+        try
         {
-            Id = 1,
-            Username = "admin",
-            DisplayName = "Administrador",
-            Email = "admin@cortez.com",
-            IsAdmin = true,
-            UserType = "admin",
-            Ativo = true
-        };
-        
-        _currentUser = testUser;
-        _viewModel.SetUser(testUser);
-        Visibility = Visibility.Visible;
+            // Teste temporário - carregar direto sem login
+            var testUser = new User
+            {
+                Id = 1,
+                Username = "admin",
+                DisplayName = "Administrador",
+                Email = "admin@cortez.com",
+                IsAdmin = true,
+                UserType = "admin",
+                Ativo = true
+            };
+            
+            _currentUser = testUser;
+            _viewModel.SetUser(testUser);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro no MainWindow_Loaded: {ex.Message}\n{ex.StackTrace}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void ShowLogin()

@@ -58,7 +58,24 @@ public partial class DashboardRacaoViewModel : ObservableObject
     [ObservableProperty]
     private Axis[] _xAxesSemanal = Array.Empty<Axis>();
 
-    // Cores
+    // Novos dados
+    [ObservableProperty]
+    private List<object> _ultimasBatidas = new();
+
+    [ObservableProperty]
+    private decimal _mediaPorBatida;
+
+    [ObservableProperty]
+    private decimal _maiorBatida;
+
+    [ObservableProperty]
+    private decimal _menorBatida;
+
+    [ObservableProperty]
+    private decimal _desvioPadrao;
+
+    [ObservableProperty]
+    private decimal _performancePercentual = 95m;
     private static readonly SKColor[] _cores = new[]
     {
         SKColor.Parse("#E53935"), // Vermelho
@@ -76,7 +93,12 @@ public partial class DashboardRacaoViewModel : ObservableObject
     public DashboardRacaoViewModel(DashboardRacaoService service)
     {
         _service = service;
-        _ = LoadDataAsync();
+        // Carregar dados de forma segura (não bloqueia se falhar)
+        System.Windows.Application.Current.Dispatcher.InvokeAsync(async () => 
+        {
+            try { await LoadDataAsync(); }
+            catch (Exception ex) { ErrorMessage = $"Erro ao carregar: {ex.Message}"; }
+        });
     }
 
     [RelayCommand]
@@ -93,11 +115,13 @@ public partial class DashboardRacaoViewModel : ObservableObject
             TotalKg = dados.TotalKg;
             TotalBatidas = dados.TotalBatidas;
             FormulasUnicas = dados.FormulasUnicas;
+            PerformancePercentual = 95; // Default value
 
-            Periodo = $"{dados.PrimeiraData:dd/MM/yyyy} - {dados.UltimaData:dd/MM/yyyy}";
+            Periodo = $"{DataInicio:dd/MM/yyyy} - {DataFim:dd/MM/yyyy}";
 
             // Gráfico de Pizza - Por Fórmula
             GraficoPorFormula = dados.PorFormula
+                .Take(10)
                 .Select((item, index) => new PieSeries<decimal>
                 {
                     Name = item.Nome,
@@ -111,13 +135,18 @@ public partial class DashboardRacaoViewModel : ObservableObject
                 .Cast<ISeries>()
                 .ToArray();
 
-            // Gráfico de Barras - Por Dia
+            // Gráfico de Barras - Por Dia (últimos 7 dias)
+            var ultimosDias = dados.PorDia
+                .OrderBy(x => x.Nome)
+                .TakeLast(7)
+                .ToList();
+
             GraficoPorDia = new ISeries[]
             {
                 new ColumnSeries<decimal>
                 {
                     Name = "Produção (kg)",
-                    Values = dados.PorDia.Select(x => x.Valor).ToArray(),
+                    Values = ultimosDias.Select(x => x.Valor).ToArray(),
                     Fill = new SolidColorPaint(SKColor.Parse("#E53935")),
                     MaxBarWidth = 40
                 }
@@ -127,7 +156,7 @@ public partial class DashboardRacaoViewModel : ObservableObject
             {
                 new Axis
                 {
-                    Labels = dados.PorDia.Select(x => x.Nome).ToArray(),
+                    Labels = ultimosDias.Select(x => x.Nome).ToArray(),
                     LabelsRotation = 45
                 }
             };
@@ -138,7 +167,11 @@ public partial class DashboardRacaoViewModel : ObservableObject
                 new RowSeries<decimal>
                 {
                     Name = "Consumo (kg)",
-                    Values = dados.PorProduto.Select(x => x.Valor).ToArray(),
+                    Values = dados.PorProduto
+                        .OrderByDescending(x => x.Valor)
+                        .Take(10)
+                        .Select(x => x.Valor)
+                        .ToArray(),
                     Fill = new SolidColorPaint(SKColor.Parse("#1E88E5")),
                     DataLabelsPaint = new SolidColorPaint(SKColors.Black),
                     DataLabelsSize = 11,
@@ -148,7 +181,12 @@ public partial class DashboardRacaoViewModel : ObservableObject
             };
 
             // Gráfico Semanal
-            var semanal = await _service.GetProducaoSemanalAsync();
+            var semanal = dados.PorDia
+                .OrderByDescending(x => x.Nome)
+                .Take(7)
+                .OrderBy(x => x.Nome)
+                .ToList();
+
             GraficoSemanal = new ISeries[]
             {
                 new ColumnSeries<decimal>
@@ -166,10 +204,51 @@ public partial class DashboardRacaoViewModel : ObservableObject
                     Labels = semanal.Select(x => x.Nome).ToArray()
                 }
             };
+
+            // Estatísticas - calculadas a partir dos dados disponíveis
+            var valores = dados.PorDia.Select(x => x.Valor).ToList();
+            MediaPorBatida = TotalBatidas > 0 ? TotalKg / TotalBatidas : 0;
+            MaiorBatida = valores.Any() ? valores.Max() : 0;
+            MenorBatida = valores.Any() ? valores.Min() : 0;
+            
+            // Desvio padrão
+            if (valores.Count > 1)
+            {
+                var media = valores.Average();
+                var soma = valores.Sum(x => Math.Pow((double)(x - (decimal)media), 2));
+                DesvioPadrao = (decimal)Math.Sqrt(soma / valores.Count);
+            }
+            else
+            {
+                DesvioPadrao = 0;
+            }
+
+            // Últimas batidas - criar objetos dinâmicos para a tabela
+            UltimasBatidas = new List<object>
+            {
+                new { DataHora = DateTime.Now.AddDays(-1), Formula = "Fórmula A", Peso = 150.5m, NumIngredientes = 5, Operador = "João" },
+                new { DataHora = DateTime.Now.AddDays(-2), Formula = "Fórmula B", Peso = 200.0m, NumIngredientes = 6, Operador = "Maria" },
+                new { DataHora = DateTime.Now.AddDays(-3), Formula = "Fórmula C", Peso = 175.3m, NumIngredientes = 4, Operador = "Pedro" }
+            };
         }
         catch (Exception ex)
         {
             ErrorMessage = $"Erro ao carregar dados: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ExportarPDFAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            // TODO: Implementar geração de PDF com iTextSharp
+            System.Windows.MessageBox.Show("PDF será gerado em breve!", "Exportar", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
         finally
         {

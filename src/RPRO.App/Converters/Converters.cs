@@ -44,12 +44,19 @@ public class InvertBoolConverter : IValueConverter
 
 /// <summary>
 /// Converte null para Visibility (null = Collapsed, not null = Visible)
+/// Suporta parâmetro "Invert" para inverter a lógica
 /// </summary>
 public class NullToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value != null ? Visibility.Visible : Visibility.Collapsed;
+        bool isNull = value == null;
+        bool invert = parameter?.ToString()?.ToLower() == "invert";
+        
+        if (invert)
+            return isNull ? Visibility.Visible : Visibility.Collapsed;
+        else
+            return isNull ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

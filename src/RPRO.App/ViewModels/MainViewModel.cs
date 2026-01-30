@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RPRO.Core.Entities;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace RPRO.App.ViewModels;
 
@@ -34,6 +35,9 @@ public partial class MainViewModel : ObservableObject
     private void LoadMenuItems()
     {
         MenuItems.Clear();
+        
+        // Adicionar TEST no início
+        MenuItems.Add(new MenuItem { Title = "🧪 TEST", Icon = "Bug", ViewType = typeof(TestViewModel) });
         
         if (CurrentUser?.UserType == "amendoim")
         {
@@ -78,20 +82,26 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
+            System.Diagnostics.Debug.WriteLine($"NavigateTo chamado para: {viewModelType.Name}");
+            App.LogError($"NavigateTo: {viewModelType.Name}");
+            
             var viewModel = _services.GetService(viewModelType);
             if (viewModel != null)
             {
                 CurrentView = viewModel;
                 System.Diagnostics.Debug.WriteLine($"Navegou para: {viewModelType.Name}");
+                App.LogError($"Navegou com sucesso para: {viewModelType.Name}");
             }
             else
             {
                 System.Diagnostics.Debug.WriteLine($"ERRO: ViewModel {viewModelType.Name} é null!");
+                App.LogError($"ERRO: ViewModel {viewModelType.Name} retornou null do DI!");
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"ERRO na navegação: {ex.Message}");
+            App.LogError($"ERRO na navegação: {ex}");
         }
     }
 
@@ -99,15 +109,25 @@ public partial class MainViewModel : ObservableObject
     {
         CurrentUser = user;
         System.Diagnostics.Debug.WriteLine($"User definido: {user.DisplayName}");
+        App.LogError($"SetUser: {user.DisplayName}, Type: {user.UserType}");
         
         LoadMenuItems();
         System.Diagnostics.Debug.WriteLine($"MenuItems carregados: {MenuItems.Count}");
+        App.LogError($"MenuItems carregados: {MenuItems.Count}");
         
-        // Navegar para primeiro item
-        if (MenuItems.Count > 0)
+        // Selecionar primeiro menu útil (pular o item de teste) ou o primeiro disponível
+        var defaultMenu = MenuItems.FirstOrDefault(item => item.ViewType != typeof(TestViewModel))
+                          ?? MenuItems.FirstOrDefault();
+
+        if (defaultMenu != null)
         {
-            SelectedMenuItem = MenuItems[0];
-            System.Diagnostics.Debug.WriteLine($"Primeiro menu item selecionado: {MenuItems[0].Title}");
+            App.LogError($"Selecionando primeiro menu: {defaultMenu.Title}");
+            SelectedMenuItem = defaultMenu;
+            System.Diagnostics.Debug.WriteLine($"Primeiro menu item selecionado: {defaultMenu.Title}");
+        }
+        else
+        {
+            App.LogError("ERRO: MenuItems está vazio!");
         }
     }
 }

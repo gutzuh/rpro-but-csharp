@@ -521,3 +521,6 @@ C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\sr
 C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.App\obj\Debug\net8.0-windows\win-x64\Cortez.dll
 C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.App\obj\Debug\net8.0-windows\win-x64\RPRO.App.genruntimeconfig.cache
 C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.App\obj\Debug\net8.0-windows\win-x64\ref\Cortez.dll
+C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.App\obj\Debug\net8.0-windows\win-x64\Resources\ViewTemplates.baml
+C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.App\obj\Debug\net8.0-windows\win-x64\Views\TestView.baml
+C:\Users\cmp00\OneDrive\Área de Trabalho\NABRA\Coisas Miguel\testecortezc#2v\src\RPRO.App\obj\Debug\net8.0-windows\win-x64\Views\TestView.g.cs
