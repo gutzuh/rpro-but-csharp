@@ -105,7 +105,7 @@ public class EqualityConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is bool b && b)
-            return parameter?.ToString();
+            return parameter?.ToString() ?? string.Empty; // Garantir que o retorno não seja null
         return Binding.DoNothing;
     }
 }

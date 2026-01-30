@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RPRO.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0fc4a787d53c54fd7f3527265843ec86bfa2dee0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+01529a6eddd5e9391b91906992e79e7fbb355614")]
 [assembly: System.Reflection.AssemblyProductAttribute("RPRO.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RPRO.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -244,10 +244,11 @@ public partial class ConfiguracoesViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task LimparBancoDadosAsync()
+    private Task LimparBancoDadosAsync()
     {
         // TODO: Implementar confirmação e limpeza
         MostrarMensagem("Funcionalidade em desenvolvimento", false);
+        return Task.CompletedTask;
     }
 
     private void MostrarMensagem(string texto, bool sucesso)
